@@ -1,21 +1,53 @@
 class Carousel {
-    constructor (element) {
-        this.element = element;
+	constructor (element) {
+		this.element = element;
 
-        this.slides = this.element.querySelectorAll('img');
-        this.currSlide = 0;
+		this.slides = [...this.element.querySelectorAll('img')]
+			.map(e => new Panel(e));
+		
+		this.currSlide = 0;
+		this.slides[this.currSlide].select();
 
-        this.element.querySelector('.left-button')
-            .addEventListener('click', () => this.slide('left'));
-        this.element.querySelector('.right-button')
-        .addEventListener('click', () => this.slide('right'));
+		this.element.querySelector('.left-button')
+			.addEventListener('click', () => this.slide('left'));
+		this.element.querySelector('.right-button')
+			.addEventListener('click', () => this.slide('right'));
 
-        console.log(this);
-    }
+		console.log(this);
+	}
 
-    slide = (dir) => {
-        console.log(dir)
-    }
+	slide = (dir) => {
+		console.log(dir)
+		let next;
+		switch (dir) {
+			case 'left': 
+				next = this.currSlide == 0 ? this.slides.length - 1 : this.currSlide - 1 ;
+				break;
+			case 'right': 
+				next = this.currSlide == this.slides.length - 1 ? 0 : this.currSlide + 1;
+				break;
+			default:
+				console.log('Carousel.slide called with invalid direction');
+		}
+		this.slides[this.currSlide].deselect();
+		this.slides[next].select();
+
+		this.currSlide = next;
+	}
+}
+
+class Panel {
+	constructor (element) {
+		this.element = element;
+	}
+
+	select () {
+		this.element.style.cssText = 'display: initial'; 
+	}
+
+	deselect () {
+		this.element.style.cssText = 'display: none';
+	}
 }
 
 let carousel = new Carousel(document.querySelector('.carousel'));
